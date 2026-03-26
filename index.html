@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Camp List">
+<meta name="theme-color" content="#1a1f16">
+<title>🏕️ Camp List</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏕️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito',sans-serif;background:#1a1f16;color:#e8e4dc;min-height:100vh;min-height:100dvh;padding-bottom:60px;user-select:none;-webkit-user-select:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input{font-family:inherit;outline:none}
+.header{background:linear-gradient(135deg,#2d3a22,#1a1f16);padding:max(env(safe-area-inset-top),28px) 20px 20px;border-bottom:1px solid #3a4530}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+h1{font-size:22px;font-weight:800;color:#d4e4a6;letter-spacing:-0.3px}
+.subtitle{margin-top:4px;font-size:13px;color:#8a9670;font-weight:600}
+.h-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#8a9670;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px}
+.h-btn.active{background:rgba(230,168,23,0.2);border-color:rgba(230,168,23,0.4);color:#e6a817}
+.legend{display:flex;gap:10px;font-size:11px;font-weight:700;color:#6b7a55;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:4px}
+.legend-dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+.prog-labels{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#8a9670;margin-bottom:6px}
+.prog-track{background:rgba(255,255,255,0.08);border-radius:100px;height:8px;overflow:hidden;position:relative}
+.prog-bar{position:absolute;left:0;top:0;height:100%;border-radius:100px;transition:width 0.4s ease}
+.prog-gathered{background:linear-gradient(90deg,#c89520,#e6b830);z-index:1}
+.prog-packed{background:linear-gradient(90deg,#8aad4a,#b5cc6a);z-index:2}
+.prog-sub{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#6b7a55;margin-top:4px}
+.hint{margin-top:10px;font-size:11px;color:#5a6a48;font-weight:600}
+.body{padding:8px 12px}
+.shop-card{margin-top:12px;background:rgba(212,93,93,0.06);border-radius:14px;border:1px solid rgba(212,93,93,0.2);overflow:hidden}
+.shop-header{display:flex;align-items:center}
+.shop-header-btn{flex:1;display:flex;justify-content:space-between;align-items:center;padding:14px 16px}
+.shop-title{font-size:15px;font-weight:700;color:#e89090}
+.shop-badge{font-size:12px;font-weight:700;color:#d45d5d;background:rgba(212,93,93,0.15);padding:3px 10px;border-radius:100px}
+.share-btn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#8a9670;font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;margin-right:12px;white-space:nowrap}
+.shop-body{padding:0 12px 12px}
+.shop-cat-label{margin:10px 0 4px;font-size:11px;font-weight:700;color:#8a7060;text-transform:uppercase;letter-spacing:0.5px}
+.shop-item-row{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.03);margin-bottom:4px}
+.shop-item-text{font-size:13px;font-weight:600;color:#e0c8b8;flex:1}
+.shop-bought-btn{background:rgba(124,179,66,0.2);border:1px solid rgba(124,179,66,0.3);color:#aed581;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;white-space:nowrap;margin-left:8px}
+.cat{margin-top:12px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);overflow:hidden;transition:all 0.3s ease;background:rgba(255,255,255,0.03)}
+.cat.done{background:rgba(124,179,66,0.08);border-color:rgba(124,179,66,0.25)}
+.cat-row{display:flex;align-items:center}
+.cat-btn{flex:1;display:flex;justify-content:space-between;align-items:center;padding:14px 16px}
+.cat-title{font-size:15px;font-weight:700;text-align:left;color:#d4e4a6}
+.cat.done .cat-title{color:#aed581}
+.cat-badges{display:flex;gap:6px;align-items:center}
+.cat-badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;color:#6b7a55;background:rgba(255,255,255,0.06)}
+.cat.done .cat-badge{color:#7cb342;background:rgba(124,179,66,0.15)}
+.cat-buy-badge{font-size:11px;font-weight:700;color:#d45d5d;background:rgba(212,93,93,0.15);padding:2px 8px;border-radius:100px}
+.del-x{color:#a04040;font-size:18px;padding:8px 14px 8px 4px;font-weight:700}
+.confirm-bar{padding:10px 16px;background:rgba(160,64,64,0.12);border-top:1px solid rgba(160,64,64,0.2);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.confirm-text{font-size:13px;color:#e08080;font-weight:600}
+.confirm-yes{background:#a04040;color:#fff;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700}
+.confirm-no{background:rgba(255,255,255,0.1);color:#aaa;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700}
+.item-list{padding:0 8px 8px}
+.pack-all-btn{display:flex;align-items:center;gap:6px;margin:2px 10px 6px;padding:6px 12px;background:rgba(124,179,66,0.1);border:1px solid rgba(124,179,66,0.2);border-radius:8px;color:#aed581;font-size:12px;font-weight:700}
+.item-row{display:flex;align-items:flex-start;border-radius:10px;transition:background 0.15s ease}
+.item-btn{flex:1;display:flex;align-items:flex-start;gap:12px;padding:10px;text-align:left;touch-action:manipulation}
+.cb{width:22px;height:22px;min-width:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all 0.15s ease}
+.item-text{font-size:14px;line-height:1.45;transition:all 0.15s ease;font-weight:600}
+.item-sub{font-size:11px;font-weight:700;opacity:0.7}
+.edit-pencil{color:#6b7a55;font-size:11px;margin-left:6px}
+.inl-confirm{display:flex;align-items:center;gap:4px;padding-right:8px;padding-top:8px}
+.inl-yes{background:#a04040;color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700}
+.inl-no{background:rgba(255,255,255,0.08);color:#888;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700}
+.item-del-x{color:#704040;font-size:15px;padding:10px 10px 10px 4px;font-weight:600}
+.add-row{display:flex;gap:8px;padding:8px 10px;align-items:center}
+.text-input{flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;color:#e8e4dc;font-size:14px}
+.add-btn{background:linear-gradient(135deg,#7cb342,#9ccc65);border-radius:8px;padding:8px 14px;color:#1a1f16;font-size:13px;font-weight:700}
+.cancel-sm{background:rgba(255,255,255,0.06);border-radius:8px;padding:8px 12px;color:#8a9670;font-size:13px;font-weight:600}
+.add-item-btn{width:100%;padding:8px 10px;display:flex;align-items:center;gap:8px;color:#6b7a55;font-size:13px;font-weight:600}
+.add-icon{width:20px;height:20px;border-radius:6px;border:1.5px dashed #4a5a38;display:flex;align-items:center;justify-content:center;font-size:14px}
+.add-sec-box{margin-top:12px;padding:16px;background:rgba(255,255,255,0.03);border-radius:14px;border:1px dashed rgba(255,255,255,0.15)}
+.add-sec-btn{width:100%;margin-top:12px;padding:16px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.1);border-radius:14px;color:#6b7a55;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#3a4530;color:#d4e4a6;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;z-index:999;box-shadow:0 6px 24px rgba(0,0,0,0.5);white-space:nowrap;animation:fadeInOut 2.2s ease forwards}
+@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(10px)}10%{opacity:1;transform:translateX(-50%) translateY(0)}80%{opacity:1}100%{opacity:0}}
+.picker-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;background:rgba(0,0,0,0.3)}
+.picker{position:fixed;z-index:1000;left:20px;right:20px;background:#2a3020;border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:6px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+.picker-label{margin:8px 12px 6px;font-size:12px;font-weight:700;color:#8a9670;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.picker-opt{width:100%;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px}
+.picker-opt.current{background:rgba(255,255,255,0.08)}
+.picker-opt-label{font-size:14px;font-weight:600;color:#a0a090}
+.picker-opt.current .picker-opt-label{color:#e8e4dc}
+.picker-current{margin-left:auto;font-size:11px;color:#8a9670;font-weight:700}
+.edit-input{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;color:#e8e4dc;font-size:14px;width:100%}
+.edit-sec-input{font-size:15px;font-weight:700}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const SK="camp-list-v1";
+const STATES=[
+  {label:"To get",short:"To get",color:"transparent",border:"#4a5a38",text:"#d0cabe",bg:"transparent"},
+  {label:"Need to buy",short:"Buy",color:"linear-gradient(135deg,#d45d5d,#e87c7c)",border:"none",text:"#e09090",bg:"rgba(212,93,93,0.06)"},
+  {label:"Gathered",short:"Gathered",color:"linear-gradient(135deg,#e6a817,#f0c040)",border:"none",text:"#c9b06a",bg:"rgba(230,168,23,0.06)"},
+  {label:"Packed",short:"Packed",color:"linear-gradient(135deg,#7cb342,#9ccc65)",border:"none",text:"#6b7a55",bg:"rgba(124,179,66,0.06)"}
+];
+const DD={categories:["📦 1. Heavy Gear — Load First","🏕️ 2. Camp Infrastructure","🔨 3. Tools & Supplies","🔋 4. Lighting & Power","🍳 5. Kitchen & Dry Goods","🎣 6. Activities & Fun","🧍 7. Clothing Bags (per person)","👶 8. Toddler Bag","🚿 9. Toiletries Bag","🧊 10. Cooler & Cold Items — Load Last","💳 11. Day-of — Grab & Go"],items:{"📦 1. Heavy Gear — Load First":[{id:"h1",text:"Tent (with stakes)",state:0},{id:"h2",text:"Air mattresses (4)",state:0},{id:"h3",text:"Pack-n-play or toddler cot (for 2yr old)",state:0},{id:"h4",text:"Camp Chef (with propane tank)",state:0},{id:"h5",text:"Folding table",state:0},{id:"h6",text:"Canopy",state:0},{id:"h7",text:"Firewood",state:0}],"🏕️ 2. Camp Infrastructure":[{id:"ci1",text:"Tarp (ground cover or rain fly)",state:0},{id:"ci2",text:"Tent hooks / mallet",state:0},{id:"ci3",text:"Folding chairs (5)",state:0},{id:"ci4",text:"Eno hammock (tarp, net, quilt)",state:0},{id:"ci5",text:"Door mat",state:0},{id:"ci6",text:"Clothes pins",state:0},{id:"ci7",text:"Rope (clothesline / utility)",state:0},{id:"ci8",text:"Wagon or stroller (for hauling the 2yr old)",state:0}],"🔨 3. Tools & Supplies":[{id:"t1",text:"Hatchet",state:0},{id:"t2",text:"Lighter / matches",state:0},{id:"t3",text:"Multi-tool / Leatherman",state:0},{id:"t4",text:"Duct tape",state:0},{id:"t5",text:"Zip ties",state:0},{id:"t6",text:"Small broom & dustpan",state:0},{id:"t7",text:"First aid kit",state:0},{id:"t8",text:"Kids' medicine (Tylenol, Benadryl, thermometer)",state:0},{id:"t9",text:"Allergy medicine (spring pollen!)",state:0}],"🔋 4. Lighting & Power":[{id:"lp1",text:"Extension cords",state:0},{id:"lp2",text:"Extension splitters",state:0},{id:"lp3",text:"Power strip",state:0},{id:"lp4",text:"Patio or string lights",state:0},{id:"lp5",text:"Flashlights",state:0},{id:"lp6",text:"Headlamps (4)",state:0},{id:"lp7",text:"Nightlight or glow sticks (for tent bathroom trips)",state:0},{id:"lp8",text:"Spare batteries (AA, AAA)",state:0},{id:"lp9",text:"Phone chargers (2)",state:0},{id:"lp10",text:"Power bank / battery pack",state:0},{id:"lp11",text:"Baby monitor",state:0},{id:"lp12",text:"Sound machine",state:0},{id:"lp13",text:"Portable fan",state:0}],"🍳 5. Kitchen & Dry Goods":[{id:"k1",text:"Pots, pans, and griddle",state:0},{id:"k2",text:"Cooking utensils (spatula, tongs, spoon)",state:0},{id:"k3",text:"Cutting board & knife",state:0},{id:"k4",text:"Can opener",state:0},{id:"k5",text:"Plates, bowls, cups, utensils",state:0},{id:"k6",text:"Sippy cups & snack containers (for 2yr old)",state:0},{id:"k7",text:"Reusable water bottles",state:0},{id:"k8",text:"Yeti Rambler / mugs",state:0},{id:"k9",text:"Coffee setup (Chemex or Aeropress + filters + beans)",state:0},{id:"k10",text:"Coffee hand grinder",state:0},{id:"k11",text:"Small seasoning kit (salt, pepper, oil, rubs)",state:0},{id:"k12",text:"Ziplock bags (sandwich + gallon)",state:0},{id:"k13",text:"Aluminum foil",state:0},{id:"k14",text:"Parchment paper",state:0},{id:"k15",text:"Dish soap & sponge",state:0},{id:"k16",text:"Dish towel",state:0},{id:"k17",text:"Trash bags (2–3 large, 2 small)",state:0},{id:"k18",text:"Paper towels",state:0}],"🎣 6. Activities & Fun":[{id:"a1",text:"Fishing gear (rods, tackle, bait, stringer, fillet knife)",state:0},{id:"a2",text:"Life jackets (kids)",state:0},{id:"a3",text:"Pickleball paddles, balls, & net",state:0},{id:"a4",text:"Scooters & helmets",state:0},{id:"a5",text:"Frisbee",state:0},{id:"a6",text:"Outdoor toys (balls, bubbles)",state:0},{id:"a7",text:"Binoculars for hiking",state:0},{id:"a8",text:"Chalk",state:0},{id:"a9",text:"Coloring books & crayons",state:0},{id:"a10",text:"Board games / card games (UNO, Cards, Chess)",state:0},{id:"a11",text:"Bibles",state:0},{id:"a12",text:"Portable speaker",state:0},{id:"a13",text:"S'mores supplies (marshmallows, chocolate, grahams, roasting sticks)",state:0}],"🧍 7. Clothing Bags (per person)":[{id:"cl1",text:"Shorts (2–3)",state:0},{id:"cl2",text:"Short sleeve shirts (4–5)",state:0},{id:"cl3",text:"Long sleeve shirt (1)",state:0},{id:"cl4",text:"Pants (1)",state:0},{id:"cl5",text:"Light jacket or hoodie (1)",state:0},{id:"cl6",text:"Pajamas",state:0},{id:"cl7",text:"Swimsuit",state:0},{id:"cl8",text:"Underwear (4–5)",state:0},{id:"cl9",text:"Socks (4–5 pairs)",state:0},{id:"cl10",text:"Sandals & shoes",state:0},{id:"cl11",text:"Rain jacket (just in case)",state:0},{id:"cl12",text:"Hat / cap",state:0},{id:"cl13",text:"Sunglasses",state:0},{id:"cl14",text:"Kid's laundry hamper",state:0},{id:"cl15",text:"Sleeping bags (2–3 for cool nights, lighter blankets for others)",state:0},{id:"cl16",text:"Pillows & blankets",state:0}],"👶 8. Toddler Bag":[{id:"b1",text:"Diapers (enough for 4 days + extras)",state:0},{id:"b2",text:"Wipes (2+ packs)",state:0},{id:"b3",text:"Diaper cream",state:0},{id:"b4",text:"Changing pad",state:0},{id:"b5",text:"Extra outfits (3–4 full changes)",state:0},{id:"b6",text:"Toddler-safe sunscreen",state:0},{id:"b7",text:"DEET-free bug spray (for 2yr old)",state:0},{id:"b8",text:"Life jacket (toddler-sized)",state:0},{id:"b9",text:"Toddler books & small toys",state:0},{id:"b10",text:"Favorite stuffed animal / comfort item",state:0},{id:"b11",text:"High chair clip-on or booster seat",state:0}],"🚿 9. Toiletries Bag":[{id:"hy1",text:"Sunscreen",state:0},{id:"hy2",text:"Bug spray (permethrin for clothes + regular)",state:0},{id:"hy3",text:"Towels (1–2 per person)",state:0},{id:"hy4",text:"Soap & shampoo",state:0},{id:"hy5",text:"Toothbrushes & toothpaste",state:0},{id:"hy6",text:"Deodorant",state:0},{id:"hy7",text:"Hairbrush / hair ties",state:0},{id:"hy8",text:"Lotion",state:0},{id:"hy9",text:"Hand sanitizer",state:0},{id:"hy10",text:"Wet wipes",state:0}],"🧊 10. Cooler & Cold Items — Load Last":[{id:"co1",text:"Cooler(s)",state:0},{id:"co2",text:"Ice packs or bag of ice (fill right before departure)",state:0}],"💳 11. Day-of — Grab & Go":[{id:"e1",text:"Wallet (ID, credit/debit cards, cash)",state:0},{id:"e2",text:"Keys",state:0},{id:"e3",text:"Phone & AirPods",state:0},{id:"e4",text:"Park reservation confirmation",state:0},{id:"e5",text:"Vehicle registration & insurance",state:0}]},sortUnpacked:false};
+
+let data,collapsed={},editMode=false,showShoppingList=true,addingItem=null,addingSection=false;
+let editingItem=null,editingSection=null,confirmDelete=null,picker=null,confirmReset=false;
+let idCounter=Date.now(),longPressTimer=null,pointerStart=null,didScroll=false;
+const MT=10;
+let hasWS=!!(window.storage&&window.storage.get&&window.storage.set);
+let hasLS=true;try{localStorage.setItem('_t','1');localStorage.removeItem('_t')}catch(e){hasLS=false}
+async function load(){
+  try{
+    if(hasWS){const r=await window.storage.get(SK);if(r&&r.value){data=JSON.parse(r.value);if(data.sortUnpacked===undefined)data.sortUnpacked=false;return}}
+    if(hasLS){const s=localStorage.getItem(SK);if(s){data=JSON.parse(s);if(data.sortUnpacked===undefined)data.sortUnpacked=false;return}}
+  }catch(e){}
+  data=JSON.parse(JSON.stringify(DD));
+}
+function save(){
+  const s=JSON.stringify(data);
+  if(hasWS){try{window.storage.set(SK,s)}catch(e){}}
+  if(hasLS){try{localStorage.setItem(SK,s)}catch(e){}}
+}
+function nextId(){return"item_"+(idCounter++)}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function checkSvg(state){
+  if(state===1)return'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1f16" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7" fill="none"/><line x1="8" y1="12" x2="16" y2="12"/></svg>';
+  if(state===2)return'<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" fill="#1a1f16"/></svg>';
+  if(state===3)return'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1f16" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  return'';
+}
+function showToast(msg){const old=document.querySelector('.toast');if(old)old.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2300)}
+function shareShoppingList(){
+  const tb=[];data.categories.forEach(c=>(data.items[c]||[]).forEach(i=>{if(i.state===1)tb.push({...i,_cat:c})}));
+  if(!tb.length){showToast("No items to buy");return}
+  const g={};tb.forEach(i=>{if(!g[i._cat])g[i._cat]=[];g[i._cat].push(i)});
+  let t="🛒 Camp List — Shopping\n";Object.entries(g).forEach(([c,items])=>{t+=`\n${c}\n`;items.forEach(i=>{t+=`☐ ${i.text}\n`})});
+  if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>showToast("Shopping list copied!")).catch(()=>showToast("Couldn't copy"));
+  else showToast("Clipboard not available");
+}
+function startLongPress(e,cat,id){pointerStart={x:e.clientX,y:e.clientY};didScroll=false;const rect=e.currentTarget.getBoundingClientRect();longPressTimer=setTimeout(()=>{if(!didScroll){picker={cat,id,top:Math.min(rect.top-4,window.innerHeight-260)};render()}longPressTimer=null},500)}
+function handlePointerMove(e){if(!pointerStart)return;if(Math.abs(e.clientX-pointerStart.x)>MT||Math.abs(e.clientY-pointerStart.y)>MT){didScroll=true;if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null}}}
+function cancelLongPress(){if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null}pointerStart=null}
+function handleTap(cat,id){if(didScroll){pointerStart=null;return}if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;const item=(data.items[cat]||[]).find(i=>i.id===id);if(item){item.state=(item.state+1)%4;save();render()}}pointerStart=null}
+function setItemStateDirect(cat,id,state){const item=(data.items[cat]||[]).find(i=>i.id===id);if(item){item.state=state;save();render()}}
+function removeItem(cat,id){data.items[cat]=data.items[cat].filter(i=>i.id!==id);confirmDelete=null;save();render()}
+function removeSection(cat){delete data.items[cat];data.categories=data.categories.filter(c=>c!==cat);confirmDelete=null;save();render()}
+function renameItem(cat,id,text){if(text&&text.trim()){const item=(data.items[cat]||[]).find(i=>i.id===id);if(item)item.text=text.trim();save()}editingItem=null;render()}
+function renameSection(oldName,newName){
+  if(!newName||!newName.trim()||newName.trim()===oldName){editingSection=null;render();return}
+  const name=newName.trim();if(data.categories.includes(name)){editingSection=null;render();return}
+  const idx=data.categories.indexOf(oldName);if(idx>=0)data.categories[idx]=name;
+  data.items[name]=data.items[oldName];delete data.items[oldName];
+  if(oldName in collapsed){collapsed[name]=collapsed[oldName];delete collapsed[oldName]}
+  editingSection=null;save();render();
+}
+function addItemFromInput(cat){const el=document.getElementById('add-input');if(!el||!el.value.trim())return;data.items[cat].push({id:nextId(),text:el.value.trim(),state:0});save();render();setTimeout(()=>{const el2=document.getElementById('add-input');if(el2)el2.focus()},0)}
+function addSectionFromInput(){const el=document.getElementById('add-sec-input');if(!el||!el.value.trim())return;const name=el.value.trim();if(!data.categories.includes(name)){data.categories.push(name);data.items[name]=[];save()}addingSection=false;render()}
+function doReset(){data=JSON.parse(JSON.stringify(DD));save();editMode=false;confirmReset=false;render()}
+
+function render(){
+  const app=document.getElementById('app');
+  const all=data.categories.flatMap(c=>(data.items[c]||[]).map(i=>({...i,_cat:c})));
+  const total=all.length,gathered=all.filter(i=>i.state>=2).length,packed=all.filter(i=>i.state===3).length;
+  const toBuy=all.filter(i=>i.state===1);
+  const pP=total?Math.round(packed/total*100):0,pG=total?Math.round(gathered/total*100):0;
+  const sD=data.categories.filter(c=>{const items=data.items[c]||[];return items.length>0&&items.every(i=>i.state===3)}).length;
+
+  let h=`<div class="header"><div class="header-top"><div><h1>🏕️ Camp List</h1><p class="subtitle">Spring camping · Mar 26–29, 2026</p></div>
+  <div style="display:flex;gap:8px">
+    <button class="h-btn${editMode?' active':''}" onclick="editMode=!editMode;editingItem=null;editingSection=null;confirmDelete=null;render()">${editMode?'Done':'Edit'}</button>
+    <button class="h-btn" onclick="confirmReset=!confirmReset;render()">Reset</button>
+  </div></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px">
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="border:2px solid #4a5a38"></span>To get</span>
+      <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,#d45d5d,#e87c7c)"></span>Buy</span>
+      <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,#e6a817,#f0c040)"></span>Gathered</span>
+      <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,#7cb342,#9ccc65)"></span>Packed</span>
+    </div>
+    <button class="h-btn${data.sortUnpacked?' active':''}" style="font-size:11px;padding:4px 10px" onclick="data.sortUnpacked=!data.sortUnpacked;save();render()">${data.sortUnpacked?'↑ Unpacked first':'↕ Sort'}</button>
+  </div>
+  <div style="margin-top:12px">
+    <div class="prog-labels"><span>${sD}/${data.categories.length} sections done</span><span>${packed}/${total} packed</span></div>
+    <div class="prog-track"><div class="prog-bar prog-gathered" style="width:${pG}%"></div><div class="prog-bar prog-packed" style="width:${pP}%"></div></div>
+    <div class="prog-sub">${toBuy.length?`<span>${toBuy.length} to buy</span>`:''}<span>${gathered} gathered</span></div>
+  </div>
+  <p class="hint">Tap to cycle state · Long-press to pick state</p>
+  ${confirmReset?`<div class="confirm-bar" style="margin-top:10px;border-top:none;border-radius:10px"><span class="confirm-text">Reset everything to defaults?</span><div style="display:flex;gap:8px"><button class="confirm-yes" onclick="doReset()">Reset</button><button class="confirm-no" onclick="confirmReset=false;render()">Cancel</button></div></div>`:''}
+  </div><div class="body">`;
+
+  if(toBuy.length){
+    const g={};toBuy.forEach(i=>{if(!g[i._cat])g[i._cat]=[];g[i._cat].push(i)});
+    h+=`<div class="shop-card"><div class="shop-header"><button class="shop-header-btn" onclick="showShoppingList=!showShoppingList;render()"><span class="shop-title">${showShoppingList?'▾':'▸'} 🛒 Shopping List</span><span class="shop-badge">${toBuy.length}</span></button>
+    <button class="share-btn" onclick="shareShoppingList()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Copy</button></div>`;
+    if(showShoppingList){h+='<div class="shop-body">';Object.entries(g).forEach(([cat,items])=>{h+=`<p class="shop-cat-label">${esc(cat)}</p>`;items.forEach(item=>{h+=`<div class="shop-item-row"><span class="shop-item-text">${esc(item.text)}</span><button class="shop-bought-btn" onclick="event.stopPropagation();setItemStateDirect('${cat.replace(/'/g,"\\'")}','${item.id}',2)">✓ Bought</button></div>`})});h+='</div>'}
+    h+='</div>';
+  }
+
+  data.categories.forEach(cat=>{
+    const items=data.items[cat]||[],done=items.filter(i=>i.state===3).length,buy=items.filter(i=>i.state===1).length,t=items.length;
+    const allP=t>0&&done===t,isC=collapsed[cat],snp=items.some(i=>i.state<3);
+    const sorted=data.sortUnpacked?[...items].sort((a,b)=>a.state-b.state):items;
+    const ce=cat.replace(/'/g,"\\'");
+    h+=`<div class="cat${allP?' done':''}">`;
+    if(editMode&&editingSection&&editingSection.cat===cat){
+      h+=`<div class="cat-row"><div style="flex:1;padding:10px 12px"><input class="edit-input edit-sec-input" id="edit-sec" value="${esc(editingSection.text)}" onkeydown="if(event.key==='Enter'){renameSection('${ce}',this.value)}else if(event.key==='Escape'){editingSection=null;render()}" onblur="renameSection('${ce}',this.value)"></div></div>`;
+    }else{
+      h+=`<div class="cat-row"><button class="cat-btn" onclick="${editMode?`editingSection={cat:'${ce}',text:'${ce}'};render();setTimeout(()=>{const el=document.getElementById('edit-sec');if(el)el.focus()},0)`:`collapsed['${ce}']=!collapsed['${ce}'];render()`}"><span class="cat-title">${!editMode?(isC?'▸ ':'▾ '):''}${esc(cat)}${allP?' ✓':''}${editMode?' <span class="edit-pencil">✎</span>':''}</span><div class="cat-badges">${buy?`<span class="cat-buy-badge">${buy}</span>`:''}
+      <span class="cat-badge">${done}/${t}</span></div></button>${editMode&&(!editingSection||editingSection.cat!==cat)?`<button class="del-x" onclick="confirmDelete={type:'section',cat:'${ce}'};render()">✕</button>`:''}</div>`;
+    }
+    if(confirmDelete&&confirmDelete.type==='section'&&confirmDelete.cat===cat){h+=`<div class="confirm-bar"><span class="confirm-text">Delete this section?</span><div style="display:flex;gap:8px"><button class="confirm-yes" onclick="removeSection('${ce}')">Delete</button><button class="confirm-no" onclick="confirmDelete=null;render()">Cancel</button></div></div>`}
+    if(!isC){
+      h+='<div class="item-list">';
+      if(snp&&t>0){h+=`<button class="pack-all-btn" onclick="data.items['${ce}'].forEach(i=>i.state=3);save();render()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Pack all</button>`}
+      sorted.forEach(item=>{
+        const st=STATES[item.state],isET=editMode&&editingItem&&editingItem.cat===cat&&editingItem.id===item.id;
+        const isDel=confirmDelete&&confirmDelete.type==='item'&&confirmDelete.cat===cat&&confirmDelete.id===item.id;
+        h+=`<div class="item-row" style="background:${st.bg}">`;
+        if(isET){
+          h+=`<div style="flex:1;display:flex;gap:8px;padding:8px 10px;align-items:center"><span class="cb" style="border:${item.state===0?'2px solid '+st.border:'none'};background:${item.state===0?'transparent':st.color}">${checkSvg(item.state)}</span>
+          <input class="edit-input" id="edit-item" value="${esc(editingItem.text)}" onkeydown="if(event.key==='Enter'){renameItem('${ce}','${item.id}',this.value)}else if(event.key==='Escape'){editingItem=null;render()}" onblur="renameItem('${ce}','${item.id}',this.value)"></div>`;
+        }else{
+          if(editMode){h+=`<button class="item-btn" onclick="editingItem={cat:'${ce}',id:'${item.id}',text:'${esc(item.text).replace(/'/g,"\\'")}' };render();setTimeout(()=>{const el=document.getElementById('edit-item');if(el)el.focus()},0)">`}
+          else{h+=`<button class="item-btn" onpointerdown="startLongPress(event,'${ce}','${item.id}')" onpointermove="handlePointerMove(event)" onpointerup="handleTap('${ce}','${item.id}')" onpointerleave="cancelLongPress()" onpointercancel="cancelLongPress()" oncontextmenu="event.preventDefault()">`}
+          h+=`<span class="cb" style="border:${item.state===0?'2px solid '+st.border:'none'};background:${item.state===0?'transparent':st.color}">${checkSvg(item.state)}</span>
+          <div style="display:flex;flex-direction:column;gap:1px"><span class="item-text" style="font-weight:${item.state===3?400:600};color:${st.text};text-decoration:${item.state===3?'line-through':'none'}">${esc(item.text)}${editMode?'<span class="edit-pencil">✎</span>':''}</span>
+          ${item.state>0&&item.state<3?`<span class="item-sub" style="color:${st.text}">${st.label}</span>`:''}</div></button>`;
+        }
+        if(editMode&&!isET){
+          if(isDel){h+=`<div class="inl-confirm"><button class="inl-yes" onclick="removeItem('${ce}','${item.id}')">Yes</button><button class="inl-no" onclick="confirmDelete=null;render()">No</button></div>`}
+          else{h+=`<button class="item-del-x" onclick="confirmDelete={type:'item',cat:'${ce}',id:'${item.id}'};render()">✕</button>`}
+        }
+        h+='</div>';
+      });
+      if(addingItem===cat){h+=`<div class="add-row"><input class="text-input" id="add-input" placeholder="Item name…" onkeydown="if(event.key==='Enter'){addItemFromInput('${ce}')}else if(event.key==='Escape'){addingItem=null;render()}"><button class="add-btn" onclick="addItemFromInput('${ce}')">Add</button><button class="cancel-sm" onclick="addingItem=null;render()">✕</button></div>`}
+      else{h+=`<button class="add-item-btn" onclick="addingItem='${ce}';render();setTimeout(()=>{const el=document.getElementById('add-input');if(el)el.focus()},0)"><span class="add-icon">+</span> Add item</button>`}
+      h+='</div>';
+    }
+    h+='</div>';
+  });
+
+  if(addingSection){h+=`<div class="add-sec-box"><input class="text-input" id="add-sec-input" placeholder="Section name (e.g. 🎒 Hiking Gear)" style="width:100%;margin-bottom:10px" onkeydown="if(event.key==='Enter'){addSectionFromInput()}else if(event.key==='Escape'){addingSection=false;render()}"><div style="display:flex;gap:8px"><button class="add-btn" onclick="addSectionFromInput()">Add Section</button><button class="cancel-sm" onclick="addingSection=false;render()">Cancel</button></div></div>`}
+  else{h+=`<button class="add-sec-btn" onclick="addingSection=true;render();setTimeout(()=>{const el=document.getElementById('add-sec-input');if(el)el.focus()},0)">+ Add Section</button>`}
+
+  if(picker){
+    const item=(data.items[picker.cat]||[]).find(i=>i.id===picker.id);
+    if(item){h+=`<div class="picker-overlay" onclick="picker=null;render()"></div><div class="picker" style="top:${picker.top}px"><p class="picker-label">${esc(item.text)}</p>`;
+    STATES.forEach((s,i)=>{h+=`<button class="picker-opt${item.state===i?' current':''}" onclick="event.stopPropagation();setItemStateDirect('${picker.cat.replace(/'/g,"\\'")}','${picker.id}',${i});picker=null;render()"><span class="cb" style="border:${i===0?'2px solid #4a5a38':'none'};background:${i===0?'transparent':s.color}">${checkSvg(i)}</span><span class="picker-opt-label">${s.label}</span>${item.state===i?'<span class="picker-current">current</span>':''}</button>`});
+    h+='</div>'}
+  }
+  h+='</div>';app.innerHTML=h;
+}
+load().then(()=>render());
+</script>
+</body>
+</html>
